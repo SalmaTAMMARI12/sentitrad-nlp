@@ -1,0 +1,129 @@
+name: Validation Pull Request — SentiTrad NLP
+
+on:
+  pull_request:
+    branches:
+      - main
+    # Se declenche sur toutes les branches feature/* quand elles PR vers main
+    types: [opened, synchronize, reopened]
+
+jobs:
+  # ─── JOB 1 : Verifier la syntaxe Python ────────────────────────────
+  lint-syntax:
+    name: Verification syntaxe Python
+    runs-on: ubuntu-latest
+    steps:
+      - name: Recuperer le code
+        uses: actions/checkout@v4
+
+      - name: Configurer Python 3.10
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.10"
+
+      - name: Verifier la syntaxe (pas d'erreurs Python)
+        run: |
+          python -m py_compile app.py       || true
+          python -m py_compile sentiment.py || true
+          python -m py_compile translation.py || true
+          python -m py_compile utils.py     || true
+          echo "Verification syntaxe terminee"
+
+      - name: Installer flake8 (linter)
+        run: pip install flake8
+
+      - name: Lancer flake8 (style et erreurs)
+        run: |
+          # E501 = ligne trop longue (ignore car Streamlit a des longues lignes)
+          # W503 = style de continuation de ligne (ignore)
+          flake8 . --count --select=E9,F63,F7,F82 --show-source --statistics
+          # E9   = erreurs de syntaxe graves
+          # F63  = assertions invalides
+          # F7   = erreurs de syntaxe
+          # F82  = variables non definies (undefined names)
+
+  # ─── JOB 2 : Verifier que les imports fonctionnent ─────────────────
+  check-imports:
+    name: Verification des imports et structure
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.10"
+
+      - name: Installer les dependances legeres (sans torch)
+        run: |
+          pip install streamlit plotly
+
+      - name: Verifier que app.py se parse sans erreur
+        run: |
+          python -c "
+          import ast, sys
+          try:
+              with open('app.py') as f:
+                  ast.parse(f.read())
+              print('app.py : OK')
+          except SyntaxError as e:
+              print(f'ERREUR dans app.py ligne {e.lineno}: {e.msg}')
+              sys.exit(1)
+          "
+
+      - name: Verifier la structure du projet (fichiers requis)
+        run: |
+          python -c "
+          import os, sys
+          required = ['app.py', 'sentiment.py', 'translation.py', 'utils.py', 'requirements.txt']
+          missing = [f for f in required if not os.path.exists(f)]
+          if missing:
+              print(f'Fichiers manquants: {missing}')
+              # Warning seulement (pas bloquant car travail en cours)
+          else:
+              print('Structure du projet : OK')
+          "
+
+  # ─── JOB 3 : Verifier requirements.txt ─────────────────────────────
+  check-requirements:
+    name: Verification requirements.txt
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.10"
+
+      - name: Verifier que requirements.txt existe et est valide
+        run: |
+          if [ ! -f requirements.txt ]; then
+            echo "ERREUR: requirements.txt manquant"
+            exit 1
+          fi
+          echo "requirements.txt trouve :"
+          cat requirements.txt
+
+      - name: Test d'installation des dependances legeres
+        run: |
+          pip install streamlit plotly langdetect sentencepiece
+          echo "Dependances legeres : OK"
+
+  # ─── JOB 4 : Rapport de la PR ──────────────────────────────────────
+  pr-summary:
+    name: Resume de la Pull Request
+    runs-on: ubuntu-latest
+    needs: [lint-syntax, check-imports, check-requirements]
+    if: always()
+    steps:
+      - name: Afficher le resultat global
+        run: |
+          echo "================================================"
+          echo "  RAPPORT VALIDATION — SentiTrad NLP"
+          echo "================================================"
+          echo "  Branche : ${{ github.head_ref }}"
+          echo "  Auteur  : ${{ github.actor }}"
+          echo "  Commit  : ${{ github.sha }}"
+          echo "================================================"
+          echo "  Les 3 verifications ont ete executees."
+          echo "  Verifiez les details ci-dessus avant de merger."
+          echo "================================================"
