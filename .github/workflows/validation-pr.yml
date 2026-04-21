@@ -23,10 +23,10 @@ jobs:
 
       - name: Verifier la syntaxe (pas d'erreurs Python)
         run: |
-          python -m py_compile app.py       || true
-          python -m py_compile sentiment.py || true
-          python -m py_compile translation.py || true
-          python -m py_compile utils.py     || true
+          python -m py_compile app.py       
+          python -m py_compile sentiment.py 
+          python -m py_compile translation.py 
+          python -m py_compile utils.py     
           echo "Verification syntaxe terminee"
 
       - name: Installer flake8 (linter)
