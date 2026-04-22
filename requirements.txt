@@ -1,4 +1,6 @@
 streamlit
-plotlytransformers
+plotly
+transformers
 torch
 sentencepiece
+langdetect

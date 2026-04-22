@@ -4,7 +4,7 @@ import plotly.express as px
 
 st.set_page_config(
     page_title='SentiTrad NLP',
-    page_icon='🧠',
+    page_icon='',
     layout='wide',
     initial_sidebar_state='expanded'
 )
@@ -47,7 +47,7 @@ st.markdown('''
 ''', unsafe_allow_html=True)
 
 with st.sidebar:
-    st.image('https://huggingface.co/front/assets/huggingface_logo.svg', width=120)
+    # st.image('https://huggingface.co/front/assets/huggingface_logo.svg', width=120)
     st.title(' Paramètres')
     st.divider()
 
@@ -75,7 +75,7 @@ with st.sidebar:
     else:
         st.info('Aucune analyse encore.')
 
-st.markdown('<p class="title-main">🧠 SentiTrad NLP</p>', unsafe_allow_html=True)
+st.markdown('<p class="title-main"> SentiTrad NLP</p>', unsafe_allow_html=True)
 st.caption('Analyse de sentiment & Traduction automatique par Transformers — HuggingFace')
 st.divider()
 
@@ -89,7 +89,7 @@ text_input = st.text_area(
 
 words = st.session_state.text_input.split()
 if len(words) >= MAX_WORDS:
-    st.warning(f"⚠️ Texte limité à {MAX_WORDS} mots maximum.")
+    st.warning(f" Texte limité à {MAX_WORDS} mots maximum.")
 
 col_btn1, col_btn2, _ = st.columns([2, 2, 6])
 with col_btn1:
