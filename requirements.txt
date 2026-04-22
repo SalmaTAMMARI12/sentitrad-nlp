@@ -3,5 +3,5 @@ plotly
 transformers
 torch
 sentencepiece
-langdetect
 torchvision
+langdetect
