@@ -4,7 +4,7 @@ import plotly.express as px
 
 st.set_page_config(
     page_title='SentiTrad NLP',
-    page_icon='🧠',
+    page_icon='',
     layout='wide',
     initial_sidebar_state='expanded'
 )
@@ -20,6 +20,19 @@ except ImportError:
 if 'history' not in st.session_state:
     st.session_state.history = []
 
+MAX_WORDS = 512
+
+if 'text_input' not in st.session_state:
+    st.session_state.text_input = ""
+
+def limit_text_words():
+    words = st.session_state.text_input.split()
+    if len(words) > MAX_WORDS:
+        st.session_state.text_input = " ".join(words[:MAX_WORDS])
+
+def clear_text():
+    st.session_state.text_input = ""
+
 st.markdown('''
 <style>
     .metric-card {
@@ -34,7 +47,7 @@ st.markdown('''
 ''', unsafe_allow_html=True)
 
 with st.sidebar:
-    st.image('https://huggingface.co/front/assets/huggingface_logo.svg', width=120)
+    # st.image('https://huggingface.co/front/assets/huggingface_logo.svg', width=120)
     st.title(' Paramètres')
     st.divider()
 
@@ -62,24 +75,27 @@ with st.sidebar:
     else:
         st.info('Aucune analyse encore.')
 
-st.markdown('<p class="title-main">🧠 SentiTrad NLP</p>', unsafe_allow_html=True)
+st.markdown('<p class="title-main"> SentiTrad NLP</p>', unsafe_allow_html=True)
 st.caption('Analyse de sentiment & Traduction automatique par Transformers — HuggingFace')
 st.divider()
 
 text_input = st.text_area(
-    ' Entrez votre texte ici (français, arabe, darija, anglais...)',
+    ' Entrez votre texte ici (max 512 mots)',
     height=160,
-    placeholder='Exemple : Ce restaurant est vraiment excellent, service impeccable !'
+    placeholder='Exemple : Ce restaurant est vraiment excellent, service impeccable !',
+    key='text_input',
+    on_change=limit_text_words
 )
+
+words = st.session_state.text_input.split()
+if len(words) >= MAX_WORDS:
+    st.warning(f" Texte limité à {MAX_WORDS} mots maximum.")
 
 col_btn1, col_btn2, _ = st.columns([2, 2, 6])
 with col_btn1:
     analyze_btn = st.button(' Analyser & Traduire', type='primary', use_container_width=True)
 with col_btn2:
-    clear_btn = st.button(' Effacer', use_container_width=True)
-
-if clear_btn:
-    st.rerun()
+    clear_btn = st.button(' Effacer', use_container_width=True, on_click=clear_text)
 
 if analyze_btn and text_input.strip():
 

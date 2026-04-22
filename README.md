@@ -1,6 +1,7 @@
 #  SentiTrad NLP
 
-Application web de traitement du langage naturel (NLP) combinant :
+Application web de traitement du langage naturel (NLP) développée dans le cadre du module Applications IA — Transformers & NLP. combinant :
+
 - Analyse de sentiment
 - Traduction automatique
 - Détection de langue
@@ -19,17 +20,25 @@ SentiTrad NLP est une application développée avec **Python** et **Streamlit** 
 
 ##  Technologies
 
-- HuggingFace Transformers  
-- Streamlit  
-- PyTorch  
-- Plotly  
+- HuggingFace Transformers : Modèles RoBERTa et MarianMT 
+- Streamlit  : Interface web interactive
+- PyTorch  : Backend deep learning
+- Plotly  : Visualisations graphiques
+- langdetect : Détection automatique de langue
+
+---
+## Modèles utilisés
+
+- Sentiment: cardiffnlp/twitter-roberta-base-sentiment-latest
+- Traduction: Helsinki-NLP/opus-mt-* (MarianMT)
+- Fine-tuning: RoBERTa adapté sur dataset français
 
 ---
 
 ##  Installation
 
 ```bash
-git clone https://github.com/TON-USERNAME/sentitrad-nlp.git
+git clone https://github.com/SalmaTAMMARI12/sentitrad-nlp.git
 cd sentitrad-nlp
 ```
 ```bash
@@ -44,7 +53,7 @@ streamlit run app.py
 - Analyse de sentiment (RoBERTa)
 - Traduction automatique (MarianMT)
 - Détection de langue (XLM-R)
-- Visualisation des résultats
+- Visualisation des scores de confiance avec des graphiques interactifs
 - Historique des analyses
 
 ## Qualité du code
@@ -55,5 +64,6 @@ streamlit run app.py
 ## Équipe
 - Salma TAMMARI
 - Wissal MAHBOUB
-- Assmaa EL HIDANI
 - Hiba HAMDOUNI
+- Assmaa EL HIDANI
+
